@@ -32,10 +32,10 @@ public class Main extends JPanel {
 
     
     private void drawAxis(Graphics2D g2d) {
-        g2d.setColor(Color.red);
+        /*g2d.setColor(Color.red);
         drawEdge(g2d,new Point(0, -100), new Point(0, 100));
         g2d.setColor(Color.green);
-        drawEdge(g2d,new Point(-100, 0), new Point(100, 0));
+        drawEdge(g2d,new Point(-100, 0), new Point(100, 0));*/
     }
     
     
