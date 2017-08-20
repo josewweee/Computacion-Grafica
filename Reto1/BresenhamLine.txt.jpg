@@ -1,0 +1,171 @@
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Insets;
+
+import javax.swing.JPanel;
+import javax.swing.JFrame;
+
+/**
+ * Project 1
+ * Students have to replace method drawBresenhamLine with an implementation
+ * of the Bresenham algorithm.
+ * @author htrefftz
+ */
+public class BresenhamLine extends JPanel {
+
+    public static final int STEP = 5;
+    public static final int R = 200;
+
+    public static int width;
+    public static int height;
+
+    /**
+     * Draw the lines. This is called by Java whenever it is necessary to draw
+     * (or redraw) the panel
+     * @param g Graphics context.
+     */
+    @Override
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+
+        Graphics2D g2d = (Graphics2D) g;
+
+        g2d.setColor(Color.blue);
+
+        // size es el tamaño de la ventana.
+        Dimension size = getSize();
+        // Insets son los bordes y los títulos de la ventana.
+        Insets insets = getInsets();
+
+        int w = size.width - insets.left - insets.right;
+        int h = size.height - insets.top - insets.bottom;
+
+        width = w;
+        height = h;
+        for (int x = -205; x < 205; x ++) {
+            int x1 = x;
+            int x2 = x-1;
+            int y1 = (x*x)/150;
+            int y2 = ((x-1)*(x-1))/150;
+            MyPoint p1 = new MyPoint(x1, y1);
+            MyPoint p2 = new MyPoint(x2,y2);
+            drawBresenhamLine3(g2d, p1, p2);
+        }
+        g2d.setColor(Color.pink);
+        for (int x = -205; x <= 0; x+=5) {
+            int y = 205+x;
+            int x1 = x;
+            int x2 = y;
+            int y1 = (x*x)/150;
+            int y2 = (y*y)/150;
+            MyPoint p1 = new MyPoint(x1, y1);
+            MyPoint p2 = new MyPoint(x2,y2);
+            drawBresenhamLine3(g2d, p1, p2);
+        }
+    }
+
+    /** 
+     * This has to be changed to an implementation of the Bresenham line
+     * @param g2d graphics context
+     * @param p1 beginning point of the line
+     * @param p2 end point of the line
+     */
+    public void drawBresenhamLine3(Graphics2D g, MyPoint p1, MyPoint p2) {
+
+        // Transform p1 and p2
+        viewportTransf(p1);
+        viewportTransf(p2);
+
+        // draw the line
+        int d = 0;
+        int x1=p1.x;
+        int x2=p2.x;
+        int y1=p1.y;
+        int y2=p2.y;
+ 
+        int dy = Math.abs(y2 - y1);
+        int dx = Math.abs(x2 - x1);
+ 
+        int dy2 = (dy << 1); // slope scaling factors to avoid floating
+        int dx2 = (dx << 1); // point
+ 
+        int ix = x1 < x2 ? 1 : -1; // increment direction
+        int iy = y1 < y2 ? 1 : -1;
+ 
+        if (dy <= dx) {
+            for (;;) {
+                MyPoint p = new MyPoint(x1,y1);
+                drawPoint(p,g);
+                if (x1 == x2)
+                    break;
+                x1 += ix;
+                d += dy2;
+                if (d > dx) {
+                    y1 += iy;
+                    d -= dx2;
+                }
+            }
+        } else {
+            for (;;) {
+                MyPoint p = new MyPoint(x1,y1);
+                drawPoint(p,g);
+                if (y1 == y2)
+                    break;
+                y1 += iy;
+                d += dx2;
+                if (d > dy) {
+                    x1 += ix;
+                    d -= dy2;
+                }
+            }
+        }
+
+    }
+
+    /**
+     * Transforms a point and then draws it on the panel
+     * @param p point to be drawn
+     * @param g2d graphics context
+     */
+    public void drawPoint(MyPoint p, Graphics2D g2d) {
+        g2d.drawLine(p.x, p.y, p.x, p.y);
+    }
+
+    /**
+     * Transform a point to java coordinates: X grows from left to right and
+     * Y grows from top to bottom
+     * @param p Point to be transformed
+     */
+    public void viewportTransf(MyPoint p) {
+        p.x += width / 2;
+        p.y = height / 2 - p.y;
+    }
+
+    /**
+     * Main program
+     * @param args Not used in this case
+     */
+    public static void main(String[] args) {
+        // Crear un nuevo Frame
+        JFrame frame = new JFrame("Bresenham");
+        // Al cerrar el frame, termina la ejecución de este programa
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        // Agregar un JPanel que se llama Points (esta clase)
+        frame.add(new BresenhamLine());
+        // Asignarle tamaño
+        frame.setSize(600, 600);
+        // Poner el frame en el centro de la pantalla
+        frame.setLocationRelativeTo(null);
+        // Mostrar el frame
+        frame.setVisible(true);
+    }
+
+}
